@@ -8,283 +8,306 @@
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
-<style>
-@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Space+Mono:wght@400;700&display=swap');
-:root{--ink:#17202a;--green:#8ee6c0;--green2:#4dcc91;--yellow:#ffc83d;--blue:#91dff0;--pink:#ff8f9c;--lav:#cbb8ff;--paper:#fff;--soft:#f3f7f5;--line:#182027;--muted:#65707a;--shadow:7px 7px 0 #17202a}
-*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:#fff;color:var(--ink);font-family:Nunito,Arial,sans-serif;font-weight:600}.app{min-height:100vh;overflow:hidden}.wrap{width:min(1120px,calc(100% - 32px));margin:auto}
-.topbar{display:flex;align-items:center;justify-content:space-between;padding:20px 0 10px}.logo{display:flex;align-items:center;gap:10px;font-size:22px;font-weight:900;letter-spacing:-.04em}.logo-mark{width:42px;height:42px;border:2.5px solid var(--line);background:var(--green);border-radius:13px;display:grid;place-items:center;box-shadow:4px 4px 0 var(--line);font-weight:900;transform:rotate(-3deg)}.logo span{color:#31a874}.top-actions{display:flex;gap:8px;align-items:center}.connection{border:2px solid var(--line);border-radius:999px;padding:7px 11px;background:#fff;font-size:11px;font-family:'Space Mono',monospace}.connection.ok{background:var(--green)}.connection.err{background:var(--pink)}
-.nav{display:flex;gap:7px;flex-wrap:wrap}.nav button{border:2px solid var(--line);background:#fff;border-radius:999px;padding:9px 13px;font:800 11px Nunito;cursor:pointer;box-shadow:3px 3px 0 transparent;transition:.12s}.nav button:hover{transform:translate(-1px,-1px);box-shadow:3px 3px 0 var(--line)}.nav button.active{background:var(--yellow);box-shadow:3px 3px 0 var(--line)}
-.hero{padding:48px 0 34px;text-align:center;position:relative}.hero .sticker{position:absolute;display:grid;place-items:center;font-size:24px;width:58px;height:58px;border:2px solid var(--line);border-radius:50%;box-shadow:4px 4px 0 var(--line);font-family:'Space Mono',monospace;font-weight:700}.sticker.one{left:8%;top:30px;background:var(--blue);transform:rotate(-12deg)}.sticker.two{right:8%;top:70px;background:var(--pink);transform:rotate(9deg)}.eyebrow{display:inline-block;background:var(--green);border:2px solid var(--line);border-radius:999px;padding:6px 11px;font:700 10px 'Space Mono',monospace;box-shadow:3px 3px 0 var(--line)}.hero h1{font-size:clamp(38px,7vw,72px);line-height:.98;margin:18px auto 13px;letter-spacing:-.06em;font-weight:900;max-width:850px}.hero h1 span{position:relative;display:inline-block}.hero h1 span:after{content:"";position:absolute;left:3%;right:-3%;bottom:2px;height:9px;background:var(--yellow);z-index:-1;transform:rotate(-1deg)}.hero p{max-width:650px;margin:auto;color:#4f5962;font-size:15px;line-height:1.6}.hero-date{margin-top:18px;font:700 11px 'Space Mono',monospace}
-.daily-progress{max-width:760px;margin:18px auto 0;border:2px solid var(--line);border-radius:18px;background:var(--soft);padding:15px 17px;box-shadow:5px 5px 0 var(--line);text-align:left}.daily-progress-top{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:9px}.daily-progress-label{font-size:14px;font-weight:900}.daily-progress-sub{font-size:10px;color:var(--muted);margin-top:2px}.daily-progress-top strong{font:900 20px 'Space Mono',monospace;background:var(--green);border:2px solid var(--line);border-radius:10px;padding:6px 9px;box-shadow:3px 3px 0 var(--line)}
-.page{display:none}.page.active{display:block}.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:13px;margin-bottom:18px}.stat{border:2px solid var(--line);border-radius:17px;padding:18px;background:var(--paper);box-shadow:var(--shadow);min-height:125px}.stat:nth-child(1){background:var(--green)}.stat:nth-child(2){background:var(--blue)}.stat:nth-child(3){background:var(--yellow)}.stat:nth-child(4){background:var(--pink)}.stat-label{font:700 10px 'Space Mono',monospace;text-transform:uppercase}.stat-num{font-size:38px;line-height:1;margin-top:16px;font-weight:900}.stat-sub{font-size:11px;margin-top:7px}
-.grid{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(280px,.75fr);gap:18px}.card{border:2px solid var(--line);border-radius:18px;background:#fff;padding:20px;box-shadow:var(--shadow);margin-bottom:18px}.card.soft{background:var(--soft)}.head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:15px}.head h2{font-size:20px;margin:0;font-weight:900;letter-spacing:-.03em}.small{font-size:11px;color:var(--muted);margin-top:4px;line-height:1.5}.head-badge{border:2px solid var(--line);border-radius:999px;background:var(--lav);padding:6px 9px;font:700 9px 'Space Mono',monospace;white-space:nowrap}
-.add{display:grid;grid-template-columns:1fr 145px 105px;gap:9px;margin-bottom:14px}.field{width:100%;border:2px solid var(--line);border-radius:12px;padding:11px 12px;background:#fff;outline:none;font:600 12px Nunito}.field:focus{box-shadow:4px 4px 0 var(--green);transform:translate(-1px,-1px)}.btn{border:2px solid var(--line);border-radius:12px;background:var(--green);color:var(--ink);padding:10px 13px;font-weight:900;cursor:pointer;box-shadow:4px 4px 0 var(--line);transition:.12s}.btn:hover{transform:translate(2px,2px);box-shadow:2px 2px 0 var(--line)}.btn.yellow{background:var(--yellow)}.btn.plain{background:#fff;box-shadow:none}
-.tasks{display:grid;gap:10px}.task{display:flex;gap:11px;align-items:flex-start;border:2px solid var(--line);border-radius:14px;padding:13px;background:#fff;transition:.12s}.task:hover{box-shadow:4px 4px 0 var(--green);transform:translate(-1px,-1px)}.task.done{opacity:.55;background:#f4f6f5}.task.done .title{text-decoration:line-through}.check{width:20px;height:20px;margin-top:1px;accent-color:#32b87c;cursor:pointer}.taskmain{flex:1;min-width:0}.title{font-size:13px;font-weight:900;word-break:break-word}.meta{display:flex;flex-wrap:wrap;gap:5px;margin-top:7px}.tag{border:1.5px solid var(--line);font:700 9px 'Space Mono',monospace;padding:4px 7px;border-radius:999px;background:#f0f3f2}.tag.pri{background:var(--yellow)}.tag.late{background:var(--pink)}.del{border:2px solid var(--line);background:#fff;width:34px;height:34px;min-width:34px;border-radius:9px;font:900 18px/1 Nunito;cursor:pointer;display:grid;place-items:center;position:relative;z-index:5;pointer-events:auto}.del:hover{background:var(--pink);transform:translate(1px,1px)}.del:active{transform:translate(2px,2px)}
-.progress-row{display:flex;justify-content:space-between;font-size:11px;font-weight:900;margin:4px 0 7px}.progress{height:15px;border:2px solid var(--line);border-radius:999px;background:#fff;padding:2px;overflow:hidden}.bar{height:100%;width:0;background:var(--green2);border-radius:99px;transition:width .25s}.next{display:grid}.next-item{display:flex;justify-content:space-between;gap:10px;padding:11px 0;border-bottom:2px dashed #cbd2d0;font-size:11px}.next-item:last-child{border-bottom:0}.next-item span{white-space:nowrap;font:700 10px 'Space Mono',monospace;background:var(--blue);border:1.5px solid var(--line);padding:4px 6px;border-radius:8px;height:max-content}.quick{display:grid;grid-template-columns:1fr 1fr;gap:9px}.quick button{border:2px solid var(--line);background:#fff;border-radius:12px;padding:11px;text-align:left;font-size:11px;font-weight:900;cursor:pointer;box-shadow:3px 3px 0 var(--line)}.quick button:hover{background:var(--yellow);transform:translate(2px,2px);box-shadow:1px 1px 0 var(--line)}
-.empty{padding:28px 10px;text-align:center;color:var(--muted);font-size:11px}.table-like{display:grid}.row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:13px 0;border-bottom:2px dashed #cbd2d0}.row:last-child{border-bottom:0}.row strong{font-size:12px}.row small{display:block;color:var(--muted);font-size:10px;margin-top:3px}.pill{font:700 9px 'Space Mono',monospace;border:1.5px solid var(--line);padding:5px 8px;border-radius:999px;background:var(--green)}
 
-.footer{text-align:center;padding:42px 0 28px;color:#7a848b;font-size:10px;font-family:'Space Mono',monospace}.toast{position:fixed;left:50%;bottom:22px;transform:translate(-50%,20px);background:var(--ink);color:#fff;border:2px solid var(--line);box-shadow:5px 5px 0 var(--green);padding:11px 15px;border-radius:12px;font-size:11px;font-weight:800;opacity:0;pointer-events:none;transition:.2s;z-index:50}.toast.show{opacity:1;transform:translate(-50%,0)}
-@media(max-width:900px){.stats{grid-template-columns:repeat(2,1fr)}.grid{grid-template-columns:1fr}.sticker.one{left:2%}.sticker.two{right:2%}}
-@media(max-width:650px){.wrap{width:min(100% - 20px,1120px)}.topbar{align-items:flex-start;gap:12px;flex-direction:column}.top-actions{width:100%;justify-content:space-between}.nav{overflow:auto;flex-wrap:nowrap;padding-bottom:4px}.nav button{white-space:nowrap}.hero{padding:38px 0 28px}.hero h1{font-size:42px}.hero p{font-size:13px}.hero .sticker{display:none}.stats{grid-template-columns:1fr 1fr;gap:9px}.stat{box-shadow:4px 4px 0 var(--line);padding:14px;min-height:105px}.stat-num{font-size:30px;margin-top:13px}.card{padding:15px;box-shadow:5px 5px 0 var(--line)}.add{grid-template-columns:1fr 1fr}.add input{grid-column:1/-1}.add .btn{grid-column:1/-1}.head{display:block}.head-badge{display:inline-block;margin-top:10px}.quick{grid-template-columns:1fr}}
-@media(max-width:390px){.stats{grid-template-columns:1fr}.logo{font-size:19px}.hero h1{font-size:36px}}
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@500;600;700;800;900&family=Space+Mono:wght@400;700&display=swap');
+:root{
+  --ink:#17202a;--muted:#6b747c;--line:#182027;--paper:#fff;--soft:#f5f7f6;
+  --green:#8ee6c0;--green2:#42c98b;--yellow:#ffc83d;--blue:#91dff0;
+  --pink:#ff9aa6;--lav:#cbb8ff;--red:#ff6975;--shadow:4px 4px 0 var(--line)
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:#f7f9f8;color:var(--ink);font-family:Nunito,Arial,sans-serif}
+button,input,select,textarea{font:inherit}
+button{cursor:pointer}
+body{padding-bottom:78px}
+.app{min-height:100vh}
+.wrap{width:min(1120px,100%);margin:auto;padding:0 12px}
+.topbar{position:sticky;top:0;z-index:30;background:rgba(255,255,255,.96);backdrop-filter:blur(10px);border-bottom:2px solid var(--line);margin:0 -12px;padding:10px 12px;display:flex;align-items:center;justify-content:space-between;gap:8px}
+.logo{display:flex;align-items:center;gap:8px;font-weight:900;font-size:18px;letter-spacing:-.04em}
+.logo-mark{width:36px;height:36px;border:2px solid var(--line);background:var(--green);border-radius:11px;display:grid;place-items:center;box-shadow:3px 3px 0 var(--line);font-size:12px}
+.logo span{color:#2ea875}
+.top-actions{display:flex;align-items:center;gap:6px}
+.connection{border:2px solid var(--line);border-radius:999px;padding:6px 8px;background:#fff;font:700 8px "Space Mono";white-space:nowrap}
+.connection.ok{background:var(--green)}.connection.err{background:var(--pink)}
+.top-today{border:2px solid var(--line);background:var(--yellow);border-radius:10px;padding:7px 9px;font-size:9px;font-weight:900}
+.desktop-nav{display:none}
+.hero{padding:24px 0 14px}
+.eyebrow{display:inline-block;background:var(--green);border:2px solid var(--line);border-radius:999px;padding:5px 9px;font:700 8px "Space Mono";box-shadow:2px 2px 0 var(--line)}
+.hero h1{font-size:34px;line-height:1;margin:12px 0 7px;letter-spacing:-.06em;font-weight:900}
+.hero h1 span{color:#2ea875}
+.hero p{margin:0;color:var(--muted);font-size:11px;line-height:1.5;max-width:650px}
+.hero-date{margin-top:10px;font:700 9px "Space Mono";color:#4e5961}
+.daily-progress{margin-top:13px;border:2px solid var(--line);border-radius:15px;background:#fff;padding:12px;box-shadow:var(--shadow)}
+.daily-progress-top{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.daily-progress-label{font-size:12px;font-weight:900}.daily-progress-sub{font-size:8px;color:var(--muted);margin-top:2px}
+.daily-progress-top strong{font:900 16px "Space Mono";background:var(--green);border:2px solid var(--line);border-radius:9px;padding:5px 7px}
+.progress-row{display:flex;justify-content:space-between;font-size:8px;font-weight:900;margin:8px 0 5px}
+.progress{height:11px;border:2px solid var(--line);border-radius:999px;background:#fff;padding:1px;overflow:hidden}
+.bar{height:100%;width:0;background:var(--green2);border-radius:99px;transition:.2s}
+.page{display:none}.page.active{display:block}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin:8px 0 12px}
+.stat{border:2px solid var(--line);border-radius:13px;padding:10px;background:#fff;box-shadow:3px 3px 0 var(--line);min-height:76px}
+.stat:nth-child(1){background:var(--green)}.stat:nth-child(2){background:var(--blue)}.stat:nth-child(3){background:var(--yellow)}
+.stat:nth-child(4){background:var(--pink)}.stat:nth-child(5){background:var(--lav)}.stat:nth-child(6){background:#d9f5e8}
+.stat-label{font:700 7px "Space Mono";text-transform:uppercase}.stat-num{font-size:23px;line-height:1;font-weight:900;margin-top:8px}.stat-sub{font-size:8px;margin-top:4px}
+.card{border:2px solid var(--line);border-radius:15px;background:#fff;padding:12px;box-shadow:var(--shadow);margin-bottom:12px}
+.card.soft{background:var(--soft)}
+.head{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:10px}
+.head h2{font-size:16px;margin:0;font-weight:900;letter-spacing:-.03em}.small{font-size:8px;color:var(--muted);margin-top:3px;line-height:1.45}
+.head-badge{border:2px solid var(--line);border-radius:999px;background:var(--lav);padding:5px 7px;font:700 7px "Space Mono";white-space:nowrap}
+.toolbar{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:8px}
+.toolbar .search{grid-column:1/-1}
+.field{width:100%;border:2px solid var(--line);border-radius:10px;padding:9px 10px;background:#fff;outline:none;font-size:10px;font-weight:700;min-height:36px}
+.field:focus{box-shadow:2px 2px 0 var(--green)}
+.add-mobile{border:2px solid var(--line);border-radius:13px;background:var(--soft);padding:9px;margin-bottom:10px}
+.add-row{display:grid;grid-template-columns:1fr 92px;gap:6px}.add-row2{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:6px}
+.add-note{margin-top:6px;min-height:54px;resize:vertical}
+.add-bottom{display:flex;align-items:center;justify-content:space-between;gap:7px;margin-top:7px}
+.urgent-box{display:flex;align-items:center;gap:5px;border:2px solid var(--line);border-radius:10px;padding:8px 9px;background:#fff;font-size:8px;font-weight:900;min-height:36px}
+.urgent-box input{width:16px;height:16px;accent-color:var(--red)}
+.btn{border:2px solid var(--line);border-radius:10px;background:var(--green);padding:9px 11px;font-size:9px;font-weight:900;box-shadow:3px 3px 0 var(--line);min-height:36px}
+.btn:active{transform:translate(2px,2px);box-shadow:1px 1px 0 var(--line)}
+.btn.yellow{background:var(--yellow)}.btn.blue{background:var(--blue)}.btn.plain{background:#fff;box-shadow:none}
+.filterbar{display:flex;gap:5px;overflow:auto;padding-bottom:4px;margin:4px 0 8px}
+.filterbar button{white-space:nowrap;border:2px solid var(--line);border-radius:999px;background:#fff;padding:6px 9px;font-size:8px;font-weight:900}
+.filterbar button.active{background:var(--yellow);box-shadow:2px 2px 0 var(--line)}
+.tasks{display:grid;gap:7px}
+.task{display:grid;grid-template-columns:24px 1fr auto;gap:8px;align-items:start;border:2px solid var(--line);border-radius:12px;background:#fff;padding:10px}
+.task.done{opacity:.58;background:#f0f3f2}.task.done .title{text-decoration:line-through}
+.check{width:19px;height:19px;margin:1px 0 0;accent-color:#2db87b}
+.taskmain{min-width:0}.title{font-size:11px;font-weight:900;line-height:1.3;word-break:break-word}.note{font-size:8px;color:var(--muted);line-height:1.4;margin-top:4px}
+.meta{display:flex;flex-wrap:wrap;gap:4px;margin-top:6px}.tag{border:1.5px solid var(--line);border-radius:999px;padding:3px 5px;background:#f1f4f3;font:700 7px "Space Mono";white-space:nowrap}
+.tag.high{background:var(--pink)}.tag.medium{background:var(--yellow)}.tag.low{background:var(--green)}.tag.urgent{background:var(--red)}.tag.progress{background:var(--yellow)}.tag.done{background:var(--green)}.tag.late{background:var(--pink)}
+.task-actions{display:flex;gap:4px}.del{width:28px;height:28px;min-width:28px;border:2px solid var(--line);border-radius:8px;background:#fff;font-weight:900;display:grid;place-items:center;font-size:12px}
+.del:active{transform:translate(1px,1px)}
+.next-item{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:9px 0;border-bottom:2px dashed #cbd2d0;font-size:9px}.next-item:last-child{border-bottom:0}.next-item b{min-width:0;line-height:1.35}.time-chip{font:700 8px "Space Mono";background:var(--blue);border:1.5px solid var(--line);padding:4px 5px;border-radius:7px;white-space:nowrap}
+.quick{display:grid;grid-template-columns:1fr 1fr;gap:6px}.quick button{border:2px solid var(--line);background:#fff;border-radius:9px;padding:9px;text-align:left;font-size:8px;font-weight:900;box-shadow:2px 2px 0 var(--line)}
+.empty{text-align:center;padding:24px 8px;color:var(--muted);font-size:9px}
+.row{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:10px 0;border-bottom:2px dashed #cbd2d0}.row:last-child{border-bottom:0}.row strong{font-size:9px}.row small{display:block;color:var(--muted);font-size:7px;margin-top:3px}
+.pill{font:700 7px "Space Mono";border:1.5px solid var(--line);padding:4px 6px;border-radius:999px;background:var(--green)}
+.modal{position:fixed;inset:0;background:rgba(23,32,42,.45);display:none;align-items:flex-end;justify-content:center;padding:0;z-index:100}.modal.show{display:flex}
+.modal-box{width:100%;max-height:92vh;overflow:auto;background:#fff;border:2px solid var(--line);border-bottom:0;border-radius:18px 18px 0 0;padding:14px;box-shadow:0 -5px 0 var(--line)}
+.edit-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px}.edit-grid .full{grid-column:1/-1}.modal-actions{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:10px}
+.toast{position:fixed;left:50%;bottom:88px;transform:translate(-50%,20px);background:var(--ink);color:#fff;border:2px solid var(--line);box-shadow:4px 4px 0 var(--green);padding:9px 12px;border-radius:10px;font-size:9px;font-weight:900;opacity:0;pointer-events:none;transition:.2s;z-index:200;white-space:nowrap}.toast.show{opacity:1;transform:translate(-50%,0)}
+.bottom-nav{position:fixed;left:0;right:0;bottom:0;height:70px;background:#fff;border-top:2px solid var(--line);z-index:50;display:grid;grid-template-columns:repeat(5,1fr);padding:6px 6px 8px;gap:4px}
+.bottom-nav button{border:0;background:transparent;border-radius:10px;font-size:7px;font-weight:900;color:#6b747c;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px}
+.bottom-nav button .ico{font-size:18px;line-height:1}.bottom-nav button.active{background:var(--yellow);color:var(--ink);border:2px solid var(--line)}
+.fab{position:fixed;right:14px;bottom:82px;width:50px;height:50px;border:2px solid var(--line);border-radius:16px;background:var(--green);box-shadow:4px 4px 0 var(--line);font-size:25px;font-weight:900;z-index:40}
+.desktop-only{display:none}
+@media(min-width:700px){
+ body{padding-bottom:0}.wrap{padding:0 18px}.topbar{position:static;margin:0 -18px;padding:16px 18px;border-bottom:0}.desktop-nav{display:flex;gap:7px;overflow:auto;padding:3px 0 8px}.desktop-nav button{border:2px solid var(--line);background:#fff;border-radius:999px;padding:8px 12px;font-size:9px;font-weight:900}.desktop-nav button.active{background:var(--yellow);box-shadow:2px 2px 0 var(--line)}
+ .bottom-nav,.fab{display:none}.hero{padding:34px 0 22px}.hero h1{font-size:52px}.stats{grid-template-columns:repeat(6,1fr)}.grid{display:grid;grid-template-columns:minmax(0,1.65fr) minmax(280px,.75fr);gap:14px}.add-row{grid-template-columns:1fr 110px}.card{padding:16px}.modal{align-items:center;padding:15px}.modal-box{width:min(600px,100%);border:2px solid var(--line);border-radius:18px;box-shadow:7px 7px 0 var(--line)}
+}
+@media(min-width:1000px){.wrap{width:min(1180px,calc(100% - 36px))}.hero h1{font-size:64px}.stats{gap:10px}.stat{min-height:105px}}
 </style>
 </head>
 <body>
-<div class="app">
-<div class="wrap">
+<div class="app"><div class="wrap">
 <header class="topbar">
-  <div class="logo"><div class="logo-mark">A</div><div>Adit <span>Manager</span></div></div>
-  <div class="top-actions"><div id="status" class="connection">Mode Lokal</div></div>
+  <div class="logo"><div class="logo-mark">SM</div><div>SM <span>Joblist</span></div></div>
+  <div class="top-actions"><div id="status" class="connection">Menghubungkan...</div><button id="todayBtn" class="top-today">Hari Ini</button></div>
 </header>
-<nav class="nav">
-  <button class="active" data-page="dashboard">Dashboard</button>
-  <button data-page="routine">Jobdesk Rutin</button>
-  <button data-page="followup">Follow Up</button>
-  <button data-page="history">Histori</button>
+
+<nav class="desktop-nav">
+  <button class="active" data-page="dashboard">Dashboard</button><button data-page="joblist">Joblist</button><button data-page="routine">Rutinitas</button><button data-page="followup">Follow Up</button><button data-page="history">Histori</button>
 </nav>
+
 <section class="hero">
-  <div class="sticker one">✓</div><div class="sticker two">!</div>
-  <div class="eyebrow">Store Manager Center</div>
-  <h1 id="title">Selamat Datang, <span>Adit!</span></h1>
-  <p id="desc">Satu tempat untuk mengatur jobdesk, follow up, dan rutinitas toko tanpa ribet.</p>
+  <div class="eyebrow">STORE MANAGER JOBLIST</div>
+  <h1 id="heroTitle">Selamat Datang, <span>Adit!</span></h1>
+  <p id="heroDesc">Kelola joblist, waktu, kategori, prioritas, urgent, follow up, dan progres toko dalam satu tempat.</p>
   <div class="hero-date"><span id="day">-</span> · <span id="dateText">-</span></div>
   <div class="daily-progress">
-    <div class="daily-progress-top"><div><span class="daily-progress-label">Progress Hari Ini</span><div class="daily-progress-sub">Selesaikan checklist jobdesk hari ini.</div></div><strong id="pctTop">0%</strong></div>
-    <div class="progress-row"><span id="progressText">0 / 0</span><span id="pct">0%</span></div>
+    <div class="daily-progress-top"><div><div class="daily-progress-label">Progress Hari Ini</div><div class="daily-progress-sub">Checklist semua pekerjaan.</div></div><strong id="pctTop">0%</strong></div>
+    <div class="progress-row"><span id="progressText">0 / 0</span><span id="progressHint">0 urgent</span></div>
     <div class="progress"><div id="bar" class="bar"></div></div>
   </div>
 </section>
+
 <section id="dashboard" class="page active">
   <div class="stats">
-    <div class="stat"><div class="stat-label">Jobdesk Hari Ini</div><div class="stat-num" id="total">0</div><div class="stat-sub">Semua tugas</div></div>
-    <div class="stat"><div class="stat-label">Selesai</div><div class="stat-num" id="done">0</div><div class="stat-sub" id="doneSub">0% progress</div></div>
-    <div class="stat"><div class="stat-label">Prioritas</div><div class="stat-num" id="priority">0</div><div class="stat-sub">Belum selesai</div></div>
-    <div class="stat"><div class="stat-label">Terlambat</div><div class="stat-num" id="late">0</div><div class="stat-sub">Perlu perhatian</div></div>
+    <div class="stat"><div class="stat-label">Total</div><div id="total" class="stat-num">0</div><div class="stat-sub">Joblist</div></div>
+    <div class="stat"><div class="stat-label">Selesai</div><div id="done" class="stat-num">0</div><div id="doneSub" class="stat-sub">0%</div></div>
+    <div class="stat"><div class="stat-label">Belum</div><div id="pending" class="stat-num">0</div><div class="stat-sub">Pending</div></div>
+    <div class="stat"><div class="stat-label">Urgent</div><div id="urgent" class="stat-num">0</div><div class="stat-sub">Perlu fokus</div></div>
+    <div class="stat"><div class="stat-label">High</div><div id="high" class="stat-num">0</div><div class="stat-sub">Prioritas</div></div>
+    <div class="stat"><div class="stat-label">Late</div><div id="late" class="stat-num">0</div><div class="stat-sub">Terlambat</div></div>
   </div>
-  <div class="grid">
-    <div>
-      <div class="card">
-        <div class="head"><div><h2>Jobdesk Hari Ini</h2><div class="small">Checklist pekerjaan Store Manager hari ini.</div></div><div class="head-badge">TODAY</div></div>
-        <form id="addForm" class="add"><input id="taskInput" class="field" placeholder="Tambah jobdesk baru..." autocomplete="off"><select id="cat" class="field"><option>Harian</option><option>Tim</option><option>Operasional</option><option>Follow Up</option><option>Laporan</option></select><button class="btn" type="submit">+ Tambah</button></form>
-        <div id="tasks" class="tasks"></div>
-      </div>
-    </div>
-    <div>
-      <div class="card">
-        <div class="head"><div><h2>Jadwal Berikutnya</h2><div class="small">Tugas yang paling dekat.</div></div></div>
-        <div id="next" class="next"></div>
-      </div>
-      <div class="card">
-        <div class="head"><div><h2>Quick Add</h2><div class="small">Tambah tugas yang sering muncul.</div></div></div>
-        <div class="quick"><button data-q="Follow Up Customer">Follow Up Customer</button><button data-q="Cek Sales Promotor">Cek Sales Promotor</button><button data-q="Cek Stok Toko">Cek Stok Toko</button><button data-q="Review Closing">Review Closing</button></div>
-      </div>
-      <div class="card">
-        <div class="head"><div><h2>Rutinitas</h2><div class="small">Template yang dipakai setiap hari.</div></div><div class="head-badge">8 JOB</div></div>
-        <div id="miniRoutine" class="next"></div>
-      </div>
-      <button id="clearDone" class="btn yellow" style="width:100%;margin-bottom:18px">Bersihkan Jobdesk Selesai</button>
-    </div>
-  </div>
-</section>
-<section id="routine" class="page"><div class="card"><div class="head"><div><h2>Jobdesk Rutin</h2><div class="small">Template rutinitas Store Manager yang siap menjadi sumber reminder Telegram.</div></div><div class="head-badge">SETIAP HARI</div></div><div id="routineList" class="tasks"></div></div></section>
-<section id="followup" class="page"><div class="card"><div class="head"><div><h2>Follow Up</h2><div class="small">Tugas yang membutuhkan tindak lanjut.</div></div><div class="head-badge">FOLLOW UP</div></div><div id="followList" class="tasks"></div></div></section>
-<section id="history" class="page"><div class="card"><div class="head"><div><h2>Histori Penyelesaian</h2><div class="small">Riwayat jobdesk yang sudah diselesaikan.</div></div><div class="head-badge">HISTORY</div></div><div id="historyList" class="table-like"></div></div></section>
 
-<footer class="footer">Adit Manager Center · Store Manager Jobdesk System</footer>
+  <div class="grid"><main>
+    <div class="card">
+      <div class="head"><div><h2>Joblist Hari Ini</h2><div class="small">Tambah dan kelola semua pekerjaan di sini.</div></div><div id="selectedBadge" class="head-badge">TODAY</div></div>
+
+      <div class="add-mobile">
+        <div class="add-row"><input id="taskInput" class="field" placeholder="Nama joblist..." autocomplete="off"><input id="taskTime" class="field" type="time"></div>
+        <div class="add-row2"><select id="taskCategory" class="field"><option>Opening</option><option>Sales</option><option>Team</option><option>Operasional</option><option>Customer</option><option>Closing</option><option>Report</option></select><select id="taskPriority" class="field"><option>High</option><option selected>Medium</option><option>Low</option></select></div>
+        <textarea id="taskNote" class="field add-note" rows="2" placeholder="Catatan (opsional)"></textarea>
+        <div class="add-bottom"><label class="urgent-box"><input id="taskUrgent" type="checkbox"> URGENT</label><button id="addBtn" class="btn">+ Tambah</button></div>
+      </div>
+
+      <div class="toolbar"><input id="search" class="field search" placeholder="Cari joblist..."><select id="filterCategory" class="field"><option value="">Semua Kategori</option><option>Opening</option><option>Sales</option><option>Team</option><option>Operasional</option><option>Customer</option><option>Closing</option><option>Report</option></select><select id="filterPriority" class="field"><option value="">Prioritas</option><option>High</option><option>Medium</option><option>Low</option></select><select id="filterStatus" class="field"><option value="">Status</option><option>Belum</option><option>Progress</option><option>Selesai</option></select></div>
+      <div class="filterbar"><button class="active" data-filter="all">Semua</button><button data-filter="urgent">Urgent</button><button data-filter="pending">Belum</button><button data-filter="overdue">Terlambat</button><button data-filter="done">Selesai</button></div>
+      <div id="tasks" class="tasks"></div>
+    </div>
+  </main>
+  <aside>
+    <div class="card"><div class="head"><div><h2>Berikutnya</h2><div class="small">Yang paling dekat.</div></div></div><div id="next"></div></div>
+    <div class="card"><div class="head"><div><h2>Quick Add</h2><div class="small">Job yang sering muncul.</div></div></div><div class="quick"><button data-q="Follow Up Customer">Follow Up Customer</button><button data-q="Cek Sales Promotor">Cek Sales Promotor</button><button data-q="Cek Stok Toko">Cek Stok Toko</button><button data-q="Review Closing">Review Closing</button><button data-q="Cek Kehadiran Tim">Cek Kehadiran Tim</button><button data-q="Review Pencapaian Harian">Review Pencapaian Harian</button></div></div>
+    <div class="card soft"><div class="head"><div><h2>Tanggal</h2><div class="small">Lihat joblist tanggal lain.</div></div></div><input id="datePicker" class="field" type="date"><button id="generateRoutine" class="btn blue" style="width:100%;margin-top:7px">Buat Rutinitas</button></div>
+  </aside></div>
+</section>
+
+<section id="joblist" class="page"><div class="card"><div class="head"><div><h2>Semua Joblist</h2><div class="small">Daftar lengkap tanggal terpilih.</div></div><div class="head-badge">LIST</div></div><div id="joblistFull" class="tasks"></div></div></section>
+<section id="routine" class="page"><div class="card"><div class="head"><div><h2>Rutinitas Harian</h2><div class="small">Template pekerjaan rutin.</div></div><div class="head-badge">TEMPLATE</div></div><div id="routineList" class="tasks"></div></div></section>
+<section id="followup" class="page"><div class="card"><div class="head"><div><h2>Follow Up</h2><div class="small">Customer yang perlu ditindaklanjuti.</div></div><div class="head-badge">FOLLOW UP</div></div><div id="followList" class="tasks"></div></div></section>
+<section id="history" class="page"><div class="card"><div class="head"><div><h2>Histori</h2><div class="small">Joblist yang sudah selesai.</div></div><div class="head-badge">HISTORY</div></div><div id="historyList"></div></div></section>
+
+<footer class="footer">SM Joblist · Store Manager Joblist System</footer>
+</div></div>
+
+<button class="fab" data-page="dashboard" aria-label="Tambah joblist">+</button>
+<nav class="bottom-nav">
+ <button class="active" data-page="dashboard"><span class="ico">⌂</span>Home</button>
+ <button data-page="joblist"><span class="ico">☷</span>Joblist</button>
+ <button data-page="routine"><span class="ico">↻</span>Rutin</button>
+ <button data-page="followup"><span class="ico">→</span>Follow Up</button>
+ <button data-page="history"><span class="ico">✓</span>Histori</button>
+</nav>
+
+<div id="modal" class="modal"><div class="modal-box">
+ <div class="head"><div><h2>Edit Joblist</h2><div class="small">Ubah detail pekerjaan.</div></div><button id="closeModal" class="del">×</button></div>
+ <input id="editId" type="hidden">
+ <div class="edit-grid"><input id="editTitle" class="field full" placeholder="Nama joblist"><input id="editTime" class="field" type="time"><select id="editCategory" class="field"><option>Opening</option><option>Sales</option><option>Team</option><option>Operasional</option><option>Customer</option><option>Closing</option><option>Report</option></select><select id="editPriority" class="field"><option>High</option><option>Medium</option><option>Low</option></select><select id="editStatus" class="field"><option>Belum</option><option>Progress</option><option>Selesai</option></select><label class="urgent-box"><input id="editUrgent" type="checkbox"> URGENT</label><textarea id="editNote" class="field full" rows="3" placeholder="Catatan"></textarea></div>
+ <div class="modal-actions"><button id="cancelEdit" class="btn plain">Batal</button><button id="saveEdit" class="btn">Simpan</button></div>
 </div></div>
 <div id="toast" class="toast"></div>
+
 <script>
 const firebaseConfig={
-  apiKey:"AIzaSyD38ZdVAZKeUu00zmjcHQ22McepOhJKEus",
-  authDomain:"smjoblist-61046.firebaseapp.com",
-  projectId:"smjoblist-61046",
-  storageBucket:"smjoblist-61046.firebasestorage.app",
-  messagingSenderId:"895829627752",
-  appId:"1:895829627752:web:366ea66c2a58f7d44dfcdd",
-  measurementId:"G-JVQSGQ2Y0Q"
+ apiKey:"AIzaSyD38ZdVAZKeUu00zmjcHQ22McepOhJKEus",
+ authDomain:"smjoblist-61046.firebaseapp.com",
+ projectId:"smjoblist-61046",
+ storageBucket:"smjoblist-61046.firebasestorage.app",
+ messagingSenderId:"895829627752",
+ appId:"1:895829627752:web:366ea66c2a58f7d44dfcdd",
+ measurementId:"G-JVQSGQ2Y0Q"
 };
 const WORKER_URL="";
-const KEY="adit_manager_center_v3";
 const ROUTINE=[
- {id:"r1",title:"Cek Kehadiran Tim",cat:"Tim",time:"08:00",priority:"Normal"},
- {id:"r2",title:"Briefing & Pembagian Fokus Penjualan",cat:"Tim",time:"08:30",priority:"Prioritas"},
- {id:"r3",title:"Cek Pencapaian Sales Pagi",cat:"Harian",time:"09:00",priority:"Prioritas"},
- {id:"r4",title:"Cek Stok & Kebutuhan Toko",cat:"Operasional",time:"10:00",priority:"Normal"},
- {id:"r5",title:"Follow Up Pending CL / Customer",cat:"Follow Up",time:"13:00",priority:"Prioritas"},
- {id:"r6",title:"Monitor Live TikTok Promotor",cat:"Harian",time:"15:30",priority:"Normal"},
- {id:"r7",title:"Review Pencapaian Harian",cat:"Laporan",time:"17:00",priority:"Prioritas"},
- {id:"r8",title:"Closing & Evaluasi Toko",cat:"Laporan",time:"20:30",priority:"Normal"}
+ {id:"r1",title:"Cek Kehadiran Tim",category:"Team",time:"08:00",priority:"Medium",urgent:false,note:""},
+ {id:"r2",title:"Briefing & Pembagian Fokus Penjualan",category:"Team",time:"08:30",priority:"High",urgent:false,note:""},
+ {id:"r3",title:"Cek Pencapaian Sales Pagi",category:"Sales",time:"09:00",priority:"High",urgent:false,note:""},
+ {id:"r4",title:"Cek Stok & Kebutuhan Toko",category:"Operasional",time:"10:00",priority:"Medium",urgent:false,note:""},
+ {id:"r5",title:"Follow Up Pending CL / Customer",category:"Customer",time:"13:00",priority:"High",urgent:true,note:""},
+ {id:"r6",title:"Monitor Live TikTok Promotor",category:"Sales",time:"15:30",priority:"Medium",urgent:false,note:""},
+ {id:"r7",title:"Review Pencapaian Harian",category:"Report",time:"17:00",priority:"High",urgent:false,note:""},
+ {id:"r8",title:"Closing & Evaluasi Toko",category:"Closing",time:"20:30",priority:"Medium",urgent:false,note:""}
 ];
-let state=loadLocal();
-let FB={ready:false,uid:null,db:null};
-let unsubscribeJobdesk=null,unsubscribeHistory=null;
-let syncStarted=false;
-let currentDate=today();
-
+let FB={ready:false,uid:null,db:null},tasks=[],history=[],selectedDate=today(),currentFilter="all",unsubTasks=null,unsubHistory=null;
 function $(id){return document.getElementById(id)}
-function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
-function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,8)}
-function today(){const d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`}
-function timeNow(){return new Date().toTimeString().slice(0,5)}
-function localDateLabel(){const d=new Date();return {day:d.toLocaleDateString('id-ID',{weekday:'long'}),date:d.toLocaleDateString('id-ID',{day:'numeric',month:'long',year:'numeric'})}}
-function defaultTasks(date=today()){return ROUTINE.map(x=>({...x,date,done:false}))}
-function loadLocal(){
-  try{
-    const raw=localStorage.getItem(KEY);
-    if(raw){const x=JSON.parse(raw);if(x&&x.date===today()&&Array.isArray(x.tasks))return {...x,history:Array.isArray(x.history)?x.history:[]}}
-  }catch(e){console.warn('localStorage:',e)}
-  return {date:today(),tasks:defaultTasks(),history:[]};
+function esc(v){return String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+function today(){return new Date().toISOString().slice(0,10)}
+function nowTime(){return new Date().toTimeString().slice(0,5)}
+function makeId(){return "j_"+Date.now().toString(36)+"_"+Math.random().toString(36).slice(2,7)}
+function toast(t){let e=$("toast");e.textContent=t;e.classList.add("show");clearTimeout(window.__toast);window.__toast=setTimeout(()=>e.classList.remove("show"),1700)}
+function setStatus(t,k=""){let e=$("status");e.textContent=t;e.className="connection "+k}
+function labelDate(s){let d=new Date(s+"T12:00:00");return{day:d.toLocaleDateString("id-ID",{weekday:"long"}),date:d.toLocaleDateString("id-ID",{day:"numeric",month:"long",year:"numeric"})}}
+function ref(c){if(!FB.ready)throw Error("Firebase belum siap");return FB.db.collection("users").doc(FB.uid).collection(c)}
+function isDone(t){return t.status==="Selesai"||t.done===true}
+function isOverdue(t){return !isDone(t)&&t.time&&selectedDate===today()&&t.time<nowTime()}
+function pclass(p){return String(p||"Medium").toLowerCase()}
+
+function renderCard(t){
+ const d=isDone(t),o=isOverdue(t);
+ return `<div class="task ${d?"done":""}">
+  <input class="check" type="checkbox" data-action="toggle" data-id="${esc(t.id)}" ${d?"checked":""}>
+  <div class="taskmain"><div class="title">${t.urgent?"🔴 ":""}${esc(t.title)}</div>
+  ${t.note?`<div class="note">${esc(t.note)}</div>`:""}
+  <div class="meta">${t.time?`<span class="tag">${esc(t.time)}</span>`:"<span class=\"tag\">Tanpa Jam</span>"}
+  <span class="tag">${esc(t.category||"Operasional")}</span><span class="tag ${pclass(t.priority)}">${esc(t.priority||"Medium")}</span>
+  ${t.urgent?'<span class="tag urgent">URGENT</span>':""}<span class="tag ${d?"done":t.status==="Progress"?"progress":""}">${esc(t.status||"Belum")}</span>${o?'<span class="tag late">TERLAMBAT</span>':""}</div></div>
+  <div class="task-actions"><button class="del" data-action="edit" data-id="${esc(t.id)}">✎</button><button class="del" data-action="delete" data-id="${esc(t.id)}">×</button></div>
+ </div>`;
 }
-function persist(){state.date=today();localStorage.setItem(KEY,JSON.stringify(state))}
-function toast(msg){const el=$("toast");el.textContent=msg;el.classList.add('show');clearTimeout(window.__toast);window.__toast=setTimeout(()=>el.classList.remove('show'),1800)}
-function setStatus(text,kind=''){const el=$("status");el.textContent=text;el.className='connection '+kind}
 function render(){
-  const total=state.tasks.length;
-  const done=state.tasks.filter(x=>x.done).length;
-  const pri=state.tasks.filter(x=>!x.done&&x.priority==='Prioritas').length;
-  const late=state.tasks.filter(x=>!x.done&&x.time&&x.time<timeNow()).length;
-  const pct=total?Math.round(done/total*100):0;
-  $("total").textContent=total;
-  $("done").textContent=done;
-  $("priority").textContent=pri;
-  $("late").textContent=late;
-  $("doneSub").textContent=pct+'% progress';
-  $("pct").textContent=pct+'%';
-  $("pctTop").textContent=pct+'%';
-  $("bar").style.width=pct+'%';
-  $("progressText").textContent=done+' / '+total;
-  $("tasks").innerHTML=state.tasks.map(x=>`<div class="task ${x.done?'done':''}" data-task="${esc(x.id)}"><input class="check" type="checkbox" data-id="${esc(x.id)}" ${x.done?'checked':''}><div class="taskmain"><div class="title">${esc(x.title)}</div><div class="meta"><span class="tag">${esc(x.cat)}</span>${x.time?`<span class="tag">${esc(x.time)}</span>`:''}${x.priority==='Prioritas'?'<span class="tag pri">Prioritas</span>':''}${!x.done&&x.time&&x.time<timeNow()?'<span class="tag late">Terlambat</span>':''}</div></div><button class="del" type="button" data-delete-id="${esc(x.id)}" aria-label="Hapus jobdesk" title="Hapus jobdesk">×</button></div>`).join('')||'<div class="empty">Tidak ada jobdesk untuk hari ini.</div>';
-  const next=state.tasks.filter(x=>!x.done&&x.time).sort((a,b)=>a.time.localeCompare(b.time)).slice(0,5);
-  $("next").innerHTML=next.map(x=>`<div class="next-item"><b>${esc(x.title)}</b><span>${esc(x.time)}</span></div>`).join('')||'<div class="empty">Semua jobdesk selesai.</div>';
-  $("miniRoutine").innerHTML=ROUTINE.slice(0,5).map(x=>`<div class="next-item"><b>${esc(x.title)}</b><span>${esc(x.time)}</span></div>`).join('');
-  $("routineList").innerHTML=ROUTINE.map(x=>`<div class="task"><div class="taskmain"><div class="title">${esc(x.title)}</div><div class="meta"><span class="tag">${esc(x.time)}</span><span class="tag">Setiap Hari</span>${x.priority==='Prioritas'?'<span class="tag pri">Prioritas</span>':''}</div></div></div>`).join('');
-  const follows=state.tasks.filter(x=>x.cat==='Follow Up');
-  $("followList").innerHTML=follows.map(x=>`<div class="task ${x.done?'done':''}"><input class="check" type="checkbox" data-id="${esc(x.id)}" ${x.done?'checked':''}><div class="taskmain"><div class="title">${esc(x.title)}</div><div class="meta"><span class="tag">${esc(x.time||'Tanpa Jam')}</span><span class="tag pri">${esc(x.priority)}</span></div></div></div>`).join('')||'<div class="empty">Belum ada follow up.</div>';
-  $("historyList").innerHTML=state.history.length?state.history.slice(0,100).map(x=>`<div class="row"><div><strong>${esc(x.title)}</strong><small>${esc(x.date)}</small></div><span class="pill">Selesai</span></div>`).join(''):'<div class="empty">Belum ada histori.</div>';
+ const dl=labelDate(selectedDate);$("day").textContent=dl.day;$("dateText").textContent=dl.date;$("datePicker").value=selectedDate;$("selectedBadge").textContent=selectedDate===today()?"TODAY":selectedDate;
+ const d=tasks.filter(isDone).length,p=tasks.length-d,u=tasks.filter(x=>x.urgent&&!isDone(x)).length,h=tasks.filter(x=>x.priority==="High"&&!isDone(x)).length,l=tasks.filter(isOverdue).length,pct=tasks.length?Math.round(d/tasks.length*100):0;
+ $("total").textContent=tasks.length;$("done").textContent=d;$("pending").textContent=p;$("urgent").textContent=u;$("high").textContent=h;$("late").textContent=l;$("doneSub").textContent=pct+"% progress";$("pctTop").textContent=pct+"%";$("progressText").textContent=d+" / "+tasks.length+" selesai";$("progressHint").textContent=u+" urgent";$("bar").style.width=pct+"%";
+ let q=$("search").value.toLowerCase(),c=$("filterCategory").value,pr=$("filterPriority").value,st=$("filterStatus").value;
+ let list=tasks.filter(t=>{if(q&&!(`${t.title} ${t.note||""}`.toLowerCase().includes(q)))return false;if(c&&t.category!==c)return false;if(pr&&t.priority!==pr)return false;if(st&&(t.status||"Belum")!==st)return false;if(currentFilter==="urgent"&&!t.urgent)return false;if(currentFilter==="pending"&&isDone(t))return false;if(currentFilter==="done"&&!isDone(t))return false;if(currentFilter==="overdue"&&!isOverdue(t))return false;return true}).sort((a,b)=>String(a.time||"99:99").localeCompare(String(b.time||"99:99")));
+ $("tasks").innerHTML=list.length?list.map(renderCard).join(""):'<div class="empty">Tidak ada joblist yang sesuai.</div>';
+ $("joblistFull").innerHTML=tasks.length?tasks.slice().sort((a,b)=>String(a.time||"99:99").localeCompare(String(b.time||"99:99"))).map(renderCard).join(""):'<div class="empty">Belum ada joblist.</div>';
+ let next=tasks.filter(t=>!isDone(t)&&t.time).sort((a,b)=>a.time.localeCompare(b.time)).slice(0,5);
+ $("next").innerHTML=next.length?next.map(t=>`<div class="next-item"><b>${t.urgent?"🔴 ":""}${esc(t.title)}</b><span class="time-chip">${esc(t.time)}</span></div>`).join(""):'<div class="empty">Tidak ada joblist berikutnya.</div>';
+ let follows=tasks.filter(t=>t.category==="Customer");
+ $("followList").innerHTML=follows.length?follows.map(renderCard).join(""):'<div class="empty">Belum ada follow up.</div>';
+ $("routineList").innerHTML=ROUTINE.map(r=>`<div class="task"><div class="taskmain"><div class="title">${esc(r.title)}</div><div class="meta"><span class="tag">${r.time}</span><span class="tag">${r.category}</span><span class="tag ${pclass(r.priority)}">${r.priority}</span>${r.urgent?'<span class="tag urgent">URGENT</span>':""}</div></div><div class="task-actions"><button class="del" data-action="use" data-rid="${r.id}">+</button></div></div>`).join("");
+ $("historyList").innerHTML=history.length?history.slice(0,100).map(x=>`<div class="row"><div><strong>${esc(x.title)}</strong><small>${esc(x.date||"")}</small></div><span class="pill">Selesai</span></div>`).join(""):'<div class="empty">Belum ada histori.</div>';
 }
-function userJobdeskRef(){if(!FB.ready)throw new Error('Firebase belum siap');return FB.db.collection('users').doc(FB.uid).collection('jobdesk')}
-function userHistoryRef(){if(!FB.ready)throw new Error('Firebase belum siap');return FB.db.collection('users').doc(FB.uid).collection('history')}
 async function initFirebase(){
-  try{
-    if(!firebase.apps.length)firebase.initializeApp(firebaseConfig);
-    FB.db=firebase.firestore();
-    try{await firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL)}catch(e){console.warn('Persistence:',e)}
-    firebase.auth().onAuthStateChanged(async user=>{
-      if(user){
-        FB.uid=user.uid;FB.ready=true;setStatus('Firebase: Terhubung','ok');
-        await startFirebaseSync();
-      }else{
-        FB.uid=null;FB.ready=false;setStatus('Firebase: Login...');
-        try{await firebase.auth().signInAnonymously()}catch(e){console.error('Anonymous auth:',e);setStatus('Mode Lokal','err');toast('Firebase belum bisa login anonim — website tetap bisa dipakai')}
-      }
-    });
-  }catch(e){console.error('Firebase init:',e);FB.ready=false;setStatus('Mode Lokal','err');toast('Firebase tidak tersedia — data lokal tetap aktif')}
+ try{
+  if(!firebase.apps.length)firebase.initializeApp(firebaseConfig);FB.db=firebase.firestore();
+  try{await firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL)}catch(e){}
+  firebase.auth().onAuthStateChanged(async user=>{
+   if(!user){FB.ready=false;setStatus("Login Firebase...");try{await firebase.auth().signInAnonymously()}catch(e){console.error(e);setStatus("Firebase Error","err");toast("Anonymous login gagal")}return}
+   FB.uid=user.uid;FB.ready=true;setStatus("Firebase: Terhubung","ok");await subscribeTasks();await subscribeHistory();
+  });
+ }catch(e){console.error(e);setStatus("Firebase Error","err")}
 }
-async function seedTodayIfEmpty(){
-  const ref=userJobdeskRef();
-  const snap=await ref.where('date','==',today()).get();
-  if(!snap.empty)return;
-  const batch=FB.db.batch();
-  defaultTasks().forEach(task=>batch.set(ref.doc(task.id),{...task,updatedAt:firebase.firestore.FieldValue.serverTimestamp()},{merge:true}));
-  await batch.commit();
+async function seedRoutine(date){
+ const b=FB.db.batch();ROUTINE.forEach(r=>b.set(ref("jobdesk").doc(`${date}_${r.id}`),{title:r.title,date,time:r.time,category:r.category,priority:r.priority,urgent:r.urgent,note:r.note,status:"Belum",done:false,templateId:r.id,createdAt:firebase.firestore.FieldValue.serverTimestamp(),updatedAt:firebase.firestore.FieldValue.serverTimestamp()},{merge:true}));await b.commit()
 }
-async function startFirebaseSync(){
-  if(syncStarted)return;
-  syncStarted=true;
-  try{
-    await seedTodayIfEmpty();
-    if(unsubscribeJobdesk)unsubscribeJobdesk();
-    if(unsubscribeHistory)unsubscribeHistory();
-    unsubscribeJobdesk=userJobdeskRef().where('date','==',today()).onSnapshot(snapshot=>{
-      const tasks=[];
-      snapshot.forEach(doc=>tasks.push({id:doc.id,...doc.data()}));
-      tasks.sort((a,b)=>String(a.time||'99:99').localeCompare(String(b.time||'99:99')));
-      state.tasks=tasks;
-      persist();render();
-    },err=>{console.error('Jobdesk realtime:',err);setStatus('Firebase: Sync Error','err');toast('Gagal sinkronisasi jobdesk')});
-    unsubscribeHistory=userHistoryRef().orderBy('completedAt','desc').limit(100).onSnapshot(snapshot=>{
-      state.history=[];snapshot.forEach(doc=>state.history.push({id:doc.id,...doc.data()}));persist();render();
-    },err=>console.error('History realtime:',err));
-  }catch(e){console.error('Firebase sync:',e);syncStarted=false;setStatus('Firebase: Sync Error','err');toast('Gagal menyiapkan data Firebase')}
+async function subscribeTasks(){
+ if(!FB.ready)return;if(unsubTasks)unsubTasks();tasks=[];let r=ref("jobdesk");
+ try{let snap=await r.where("date","==",selectedDate).get();if(snap.empty&&selectedDate===today())await seedRoutine(selectedDate)}catch(e){console.error(e)}
+ unsubTasks=r.where("date","==",selectedDate).onSnapshot(s=>{tasks=[];s.forEach(d=>tasks.push({id:d.id,...d.data()}));render()},e=>{console.error(e);setStatus("Sync Error","err")})
 }
-async function saveFirebase(task){
-  if(!FB.ready)return;
-  await userJobdeskRef().doc(String(task.id)).set({...task,date:today(),updatedAt:firebase.firestore.FieldValue.serverTimestamp()},{merge:true});
+async function subscribeHistory(){
+ if(!FB.ready)return;if(unsubHistory)unsubHistory();unsubHistory=ref("history").limit(100).onSnapshot(s=>{history=[];s.forEach(d=>history.push({id:d.id,...d.data()}));render()},e=>console.error(e))
 }
-async function deleteFirebase(task){
-  if(!FB.ready)return;
-  await userJobdeskRef().doc(String(task.id)).delete();
+async function save(t){await ref("jobdesk").doc(String(t.id)).set({...t,date:selectedDate,updatedAt:firebase.firestore.FieldValue.serverTimestamp()},{merge:true})}
+async function addTask(){
+ let title=$("taskInput").value.trim();if(!title){toast("Isi nama joblist dulu");return}if(!FB.ready){toast("Firebase belum siap");return}
+ let t={id:makeId(),title,date:selectedDate,time:$("taskTime").value,category:$("taskCategory").value,priority:$("taskPriority").value,urgent:$("taskUrgent").checked,note:$("taskNote").value.trim(),status:"Belum",done:false};
+ try{await save(t);$("taskInput").value="";$("taskTime").value="";$("taskNote").value="";$("taskUrgent").checked=false;toast("Joblist ditambahkan")}catch(e){console.error(e);toast("Gagal menyimpan")}
 }
-async function addHistoryFirebase(task){
-  if(!FB.ready)return;
-  await userHistoryRef().add({title:task.title,date:new Date().toLocaleString('id-ID'),completedAt:firebase.firestore.FieldValue.serverTimestamp(),taskId:String(task.id)});
+async function toggle(id,checked){
+ let t=tasks.find(x=>String(x.id)===String(id));if(!t)return;let old={...t};t.done=checked;t.status=checked?"Selesai":"Belum";render();
+ try{await save(t);if(checked)await ref("history").add({title:t.title,date:new Date().toLocaleString("id-ID"),taskId:String(t.id),completedAt:firebase.firestore.FieldValue.serverTimestamp()});await notifyWorker("jobdesk_status",t);toast(checked?"Selesai ✓":"Dibuka lagi")}
+ catch(e){Object.assign(t,old);render();toast("Gagal menyimpan")}
 }
-async function cloudflare(action,task){if(!WORKER_URL)return;try{await fetch(WORKER_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action,task})})}catch(e){console.error('Cloudflare:',e)}}
-async function complete(id,checked){
-  const task=state.tasks.find(x=>String(x.id)===String(id));
-  if(!task)return;
-  const old=task.done;
-  task.done=checked;
-  persist();render();
-  try{
-    if(FB.ready)await saveFirebase(task);
-  }catch(e){
-    console.error('Complete save:',e);
-    task.done=old;persist();render();toast('Gagal menyimpan perubahan ke Firebase');
-    return;
-  }
-  if(checked){
-    const historyItem={title:task.title,date:new Date().toLocaleString('id-ID')};
-    state.history.unshift(historyItem);persist();render();
-    try{await addHistoryFirebase(task)}catch(e){console.error('History save:',e);}
-  }
-  await cloudflare('jobdesk_status',task);
-  toast(checked?'Jobdesk Selesai':'Jobdesk Dibuka Lagi');
+async function remove(id){
+ let t=tasks.find(x=>String(x.id)===String(id));if(!t||!confirm(`Hapus "${t.title}"?`))return;
+ try{await ref("jobdesk").doc(String(id)).delete();toast("Joblist dihapus")}catch(e){toast("Gagal menghapus")}
 }
-async function addTask(title,cat){
-  const task={id:'c_'+uid(),title,cat,time:'',priority:'Normal',done:false,date:today()};
-  state.tasks.push(task);persist();render();
-  try{await saveFirebase(task);await cloudflare('jobdesk_created',task);toast('Jobdesk Ditambahkan')}
-  catch(e){console.error('Add task:',e);state.tasks=state.tasks.filter(x=>String(x.id)!==String(task.id));persist();render();toast('Gagal menyimpan jobdesk')}
+async function notifyWorker(action,t){if(!WORKER_URL)return;try{await fetch(WORKER_URL,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({action,task:t})})}catch(e){}}
+function openEdit(id){
+ let t=tasks.find(x=>String(x.id)===String(id));if(!t)return;$("editId").value=t.id;$("editTitle").value=t.title;$("editTime").value=t.time||"";$("editCategory").value=t.category||"Operasional";$("editPriority").value=t.priority||"Medium";$("editStatus").value=t.status||"Belum";$("editUrgent").checked=!!t.urgent;$("editNote").value=t.note||"";$("modal").classList.add("show")
 }
-async function deleteTask(id){
-  const txId=String(id||'');
-  const task=state.tasks.find(x=>String(x.id)===txId);
-  if(!task){toast('Jobdesk tidak ditemukan');return false}
-  if(!confirm('Hapus jobdesk "'+task.title+'"?'))return false;
-  try{
-    if(FB.ready)await deleteFirebase(task);
-    state.tasks=state.tasks.filter(x=>String(x.id)!==txId);
-    persist();render();
-    await cloudflare('jobdesk_deleted',task);
-    toast('Jobdesk Dihapus');
-    return true;
-  }catch(e){
-    console.error('Delete task:',e);toast('Gagal menghapus jobdesk dari Firebase');return false;
-  }
+async function saveEdit(){
+ let t=tasks.find(x=>String(x.id)===String($("editId").value));if(!t)return;t.title=$("editTitle").value.trim();t.time=$("editTime").value;t.category=$("editCategory").value;t.priority=$("editPriority").value;t.status=$("editStatus").value;t.done=t.status==="Selesai";t.urgent=$("editUrgent").checked;t.note=$("editNote").value;
+ try{await save(t);$("modal").classList.remove("show");toast("Perubahan disimpan")}catch(e){toast("Gagal menyimpan")}
 }
-window.deleteTask=deleteTask;
-$("addForm").addEventListener('submit',async e=>{e.preventDefault();const title=$("taskInput").value.trim();if(!title)return;const btn=e.submitter||e.target.querySelector('button[type="submit"]');btn.disabled=true;try{await addTask(title,$("cat").value);$("taskInput").value='';}finally{btn.disabled=false}});
-$("tasks").addEventListener('change',e=>{if(e.target.classList.contains('check')&&e.target.dataset.id)complete(e.target.dataset.id,e.target.checked)});
-$("followList").addEventListener('change',e=>{if(e.target.classList.contains('check')&&e.target.dataset.id)complete(e.target.dataset.id,e.target.checked)});
-$("tasks").addEventListener('click',e=>{const btn=e.target.closest('[data-delete-id]');if(!btn)return;e.preventDefault();e.stopPropagation();deleteTask(btn.getAttribute('data-delete-id'))});
-$("clearDone").addEventListener('click',async()=>{
-  const doneTasks=state.tasks.filter(x=>x.done);if(!doneTasks.length){toast('Belum ada jobdesk selesai');return}
-  if(!confirm('Bersihkan semua jobdesk yang sudah selesai?'))return;
-  try{
-    if(FB.ready){const batch=FB.db.batch();doneTasks.forEach(task=>batch.delete(userJobdeskRef().doc(String(task.id))));await batch.commit()}
-    state.tasks=state.tasks.filter(x=>!x.done);persist();render();toast('Jobdesk Selesai Dibersihkan');
-  }catch(e){console.error('Clear done:',e);toast('Gagal membersihkan jobdesk')}
+$("addBtn").addEventListener("click",addTask);$("datePicker").addEventListener("change",async e=>{selectedDate=e.target.value||today();await subscribeTasks();render()});$("todayBtn").addEventListener("click",async()=>{selectedDate=today();await subscribeTasks();render()});
+$("generateRoutine").addEventListener("click",async()=>{if(!FB.ready)return toast("Firebase belum siap");try{await seedRoutine(selectedDate);toast("Rutinitas dibuat")}catch(e){toast("Gagal membuat rutinitas")}});
+["search","filterCategory","filterPriority","filterStatus"].forEach(id=>$(id).addEventListener("input",render));
+document.querySelectorAll("[data-filter]").forEach(b=>b.addEventListener("click",()=>{document.querySelectorAll("[data-filter]").forEach(x=>x.classList.remove("active"));b.classList.add("active");currentFilter=b.dataset.filter;render()}));
+document.addEventListener("change",e=>{if(e.target.matches('[data-action="toggle"]'))toggle(e.target.dataset.id,e.target.checked)});
+document.addEventListener("click",e=>{
+ let b=e.target.closest("[data-action]");if(!b)return;
+ if(b.dataset.action==="delete")remove(b.dataset.id);
+ if(b.dataset.action==="edit")openEdit(b.dataset.id);
+ if(b.dataset.action==="use"){let r=ROUTINE.find(x=>x.id===b.dataset.rid);if(r){$("taskInput").value=r.title;$("taskTime").value=r.time;$("taskCategory").value=r.category;$("taskPriority").value=r.priority;$("taskUrgent").checked=r.urgent;$("taskNote").value=r.note;window.scrollTo({top:0,behavior:"smooth"})}}
 });
-document.querySelectorAll('[data-q]').forEach(b=>b.addEventListener('click',()=>{$("taskInput").value=b.dataset.q;$('taskInput').focus()}));
-const pageText={dashboard:['Selamat Datang, Adit!','Satu tempat untuk mengatur jobdesk, follow up, dan rutinitas toko tanpa ribet.'],routine:['Jobdesk Rutin','Template rutinitas Store Manager yang siap menjadi sumber reminder Telegram.'],followup:['Follow Up','Tugas yang membutuhkan tindak lanjut.'],history:['Histori Penyelesaian','Riwayat jobdesk yang sudah diselesaikan.']};
-document.querySelectorAll('.nav button').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('.nav button').forEach(x=>x.classList.remove('active'));b.classList.add('active');document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));$(b.dataset.page).classList.add('active');$("title").textContent=pageText[b.dataset.page][0];$("desc").textContent=pageText[b.dataset.page][1];window.scrollTo({top:0,behavior:'smooth'})}));
-function updateDateUI(){const x=localDateLabel();$("day").textContent=x.day;$("dateText").textContent=x.date}
-updateDateUI();persist();render();initFirebase();
-setInterval(()=>{
-  const t=today();
-  if(t!==currentDate){currentDate=t;state={date:t,tasks:defaultTasks(t),history:state.history||[]};syncStarted=false;persist();render();updateDateUI();startFirebaseSync()}
-  else render();
-},30000);
+document.querySelectorAll("[data-q]").forEach(b=>b.addEventListener("click",()=>{$("taskInput").value=b.dataset.q;$("taskInput").focus()}));
+$("closeModal").addEventListener("click",()=>$("modal").classList.remove("show"));$("cancelEdit").addEventListener("click",()=>$("modal").classList.remove("show"));$("saveEdit").addEventListener("click",saveEdit);
+$("modal").addEventListener("click",e=>{if(e.target===$("modal"))$("modal").classList.remove("show")});
+const pages={dashboard:["Selamat Datang, <span>Adit!</span>","Kelola joblist, waktu, kategori, prioritas, urgent, follow up, dan progres toko."],joblist:["Semua Joblist","Daftar lengkap pekerjaan pada tanggal terpilih."],routine:["Rutinitas Harian","Template joblist yang bisa digunakan setiap hari."],followup:["Follow Up","Fokus pada pekerjaan Customer yang membutuhkan tindak lanjut."],history:["Histori","Riwayat joblist yang sudah selesai."]};
+function go(page){document.querySelectorAll(".page").forEach(x=>x.classList.remove("active"));$(page).classList.add("active");$("heroTitle").innerHTML=pages[page][0];$("heroDesc").textContent=pages[page][1];document.querySelectorAll("[data-page]").forEach(x=>x.classList.toggle("active",x.dataset.page===page));window.scrollTo({top:0,behavior:"smooth"})}
+document.querySelectorAll("[data-page]").forEach(b=>b.addEventListener("click",()=>go(b.dataset.page)));
+$("datePicker").value=selectedDate;render();initFirebase();setInterval(render,30000);
 </script>
-</body>
+
+</html>
